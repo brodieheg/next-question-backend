@@ -4,7 +4,7 @@ const Schema = mongoose.Schema;
 // Define our model
 const gameSchema = new Schema({
 	user: { type: Schema.Types.ObjectId, ref: 'user' },
-  dateCreated: Date,
+  dateCreated: String,
   score: Number,
   category: String,
   difficulty: String,

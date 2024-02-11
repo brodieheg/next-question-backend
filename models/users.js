@@ -9,6 +9,8 @@ const UserSchema = new Schema({
   games: [{ type: Schema.Types.ObjectId, ref: 'game' }],
 	hash: String,
 	salt: String,
+  allTimeScore: Number,
+  totalQuestionsAttempted: Number
 });
 
 UserSchema.methods.setPassword = function (password) {

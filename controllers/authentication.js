@@ -20,16 +20,25 @@ exports.signin = (req, res) => {
 };
 
 exports.currentUser = async (req, res) => {
-  const user = await User.findById(req.body.user)
-  const games = await Game.find({user: req.body.user})
-  console.log(user);
+  const user = await User.findById(req.user._id)
+  const games = await Game.find({user: user._id})
   games.forEach(game => {if(!user.games.includes(game._id)){user.games.push(game)} else {return}})
+  const allTimeScore = games.reduce((acc, game)  => {
+    acc += game.score;
+    return acc
+  }, 0)
+  const totalQuestionsAttempted = games.reduce((acc, game) => {
+    acc += game.questions.length
+    return acc
+  }, 0)
+  user.allTimeScore = allTimeScore;
+  user.totalQuestionsAttempted = totalQuestionsAttempted
+  console.log(totalQuestionsAttempted);
+  console.log(allTimeScore);
   await user.save();
-  const updatedUser = await User.findById(req.body.user).
+  const updatedUser = await User.findById(req.user._id).
   populate('games').
   exec();
-  console.log(updatedUser);
-  console.log('working')
 	res.send(updatedUser);
 };
 
@@ -52,6 +61,8 @@ exports.signup = async (req, res, next) => {
 		const user = new User();
 		user.email = email;
 		user.setPassword(password);
+    user.allTimeScore = 0;
+    user.totalQuestionsAttempted = 0;
 
 		await user.save();
 
